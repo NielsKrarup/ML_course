@@ -48,7 +48,7 @@
 
 \begin{document}
 \title{Machine Learning A (2023)\\Home Assignment 3}
-\author{\color{red}Your name and student ID}
+\author{\color{red}Niels Moctezuma Krarup, student ID: WTG176}
 \date{}
 \maketitle
 
@@ -108,8 +108,52 @@ $$
 Hence we are able to accept 7 teams with the new data to fulfil the bias bound.
 
 \section{Efficient use of the data (20 points)}
+We have $2M$ models where the first $M$ models are trained on $S_0$ and validated on $S_1$ yielding empirical loss $\hat{L}(h_{0,i}, S_1), i = 1,\dots,M$ and $M$ models trained on $S_1$ and validated on $S_0$ yielding empirical loss $\hat{L}(h_{1,i}, S_0), i = 1,\dots,M$. Since the total size of the data $S = S_0 \cup S_1$ is of size $n$ and the split is even $S_0$ and $S_1$ are both of size $n/2$ observations.
+
+We wish to derive a bound for the selected model's loss, i.e. 
+
+$$
+\mathbb{P}(L(h_{j*,i*}) - \hat{L}(h_{j*,i*}(S_{1-j*}) \leq \epsilon) \geq 1-\delta
+$$
+
+By splitting this up into the event of all $2M$ models having less bias than $\epsilon$ and taking the union probability bound we end up with 
+
+
+\begin{align*}
+&\mathbb{P}(L(h_{j*,i*}) - \hat{L}(h_{j*,i*}(S_{1-j*}) \geq \epsilon)  \leq \\
+&\mathbb{P}(\exists m,n : L(h_{m,n}) - \hat{L}(h_{m,n}(S_{1-m}) \geq \epsilon) \leq \\
+& \sum_{m,n} \mathbb{P}(L(h_{m,n}) - \hat{L}(h_{m,n}(S_{1-m}) \geq \epsilon) \leq
+\underbrace{2Me^{-2n\epsilon^2}}_{\delta}
+\end{align*}
+
+Where the first equality follows from the fact that the selected prediction rule being bias greater than $\epsilon$ is a subset of the event of any $h$ having this bias.
+Second follows from union bound of probability of union of events. Third is Hoefding applied on the $2M$ models.\\
+finally we solve $\delta = 2Me^{-2n\epsilon^2}$ and get 
+$\epsilon = 
+\sqrt{ 
+	\frac{\log\frac{2M}{\delta}}{2n}
+	}
+$
+Inserting this we get a $1-\delta$ bound for the bias i.e.
+
+$$
+\mathbb{P}\left(L(h_{j*,i*}) - \hat{L}(h_{j*,i*}(S_{1-j*}) \leq \sqrt{ \frac{\log\frac{2M}{\delta}}{2n}}\right) \geq 1-\delta
+$$
+
+
 
 \section{How to split a sample into training and test sets (30 points)}
+The situation is now that we have one set of data but train and evaluate the different partitions of data. The $m$ tests splits are of size $n_1,\dots,n_m$, hence the simultaneous bound for $L(\hat{h}_i)$ by splitting up the events:
+\begin{align*}
+&\mathbb{P}(\forall i: L(h_i) - \hat{L}(h_i) \leq \epsilon )  = \\
+&\mathbb{P} (\exists i: L(h_i) - \hat{L}(h_i) \geq \epsilon)  \leq \\
+&\sum_m \mathbb{P} ( L(h_m) - \hat{L}(h_m) \geq \epsilon)  \leq \\
+&\sum_m e^{-2n_m\epsilon^2}
+\end{align*}
+
+This is not really nice to invert. One could bound further by using the largest $n_m$. 
+
+
 
 \section{Preprocessing (30 points)}
 
